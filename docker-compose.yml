@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  backend:
+    image: jwt-api-test
+    build: .
+    ports:
+      - '80:8080'
+    env_file:
+      - .env.dev
