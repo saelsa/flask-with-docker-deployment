@@ -1,6 +1,9 @@
 ---
 version: 0.2
 
+env:
+  parameter-store:
+    JWT_SECRET: JWT_SECRET
 
 phases:
   install:
@@ -11,11 +14,11 @@ phases:
       - export PATH=$PWD/:$PATH
       - apt-get update && apt-get -y install jq python3-pip python3-dev && pip3 install --upgrade awscli
   pre_build:
-      commands:
-        - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-        - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple_jwt_api.yml
-        - $(aws ecr get-login --no-include-email)
-        - export KUBECONFIG=$HOME/.kube/config
+    commands:
+      - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - sed -i 's@CONTAINER_IMAGE@'"$REPOSITORY_URI:$TAG"'@' simple_jwt_api.yml
+      - $(aws ecr get-login --no-include-email)
+      - export KUBECONFIG=$HOME/.kube/config
   build:
     commands:
       - docker build --tag $REPOSITORY_URI:$TAG .
